@@ -8,6 +8,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        (function() {
+            try {
+                if (localStorage.getItem('sumber_urip_theme') === 'light') {
+                    document.documentElement.classList.add('light');
+                } else {
+                    document.documentElement.classList.remove('light');
+                }
+            } catch (e) {}
+        })();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
 </head>
@@ -29,11 +40,38 @@
                 <div class="w-3 h-3 rounded-full bg-primary"></div>
                 <span class="text-sm font-semibold text-ink tracking-tight">Sumber Urip</span>
             </a>
-            <button type="button" class="text-ink-subtle hover:text-ink transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center" @click="sidebarOpen = true" aria-label="Buka menu">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
+            <div class="flex items-center gap-1">
+                <button
+                    type="button"
+                    @click="$store.theme.toggle()"
+                    class="text-ink-subtle hover:text-ink transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center rounded-md cursor-pointer"
+                    :aria-label="$store.theme.mode === 'light' ? 'Beralih ke mode gelap' : 'Beralih ke mode terang'"
+                >
+                    <template x-if="$store.theme.mode === 'light'">
+                        <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </template>
+                    <template x-if="$store.theme.mode !== 'light'">
+                        <svg class="w-5 h-5 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </template>
+                </button>
+                <button type="button" class="text-ink-subtle hover:text-ink transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer" @click="sidebarOpen = true" aria-label="Buka menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
         </header>
 
         <div class="md:flex md:h-screen">
@@ -51,11 +89,42 @@
                         </a>
                     @endforeach
                 </nav>
-                <div class="border-t border-hairline p-4">
+                <div class="border-t border-hairline p-4 space-y-1">
+                    <button
+                        type="button"
+                        @click="$store.theme.toggle()"
+                        class="flex items-center justify-between w-full text-left text-sm font-medium text-ink-muted hover:text-ink hover:bg-surface-2 rounded-md px-3 py-2.5 transition-colors min-h-[44px] cursor-pointer"
+                        :title="$store.theme.mode === 'light' ? 'Beralih ke Mode Gelap' : 'Beralih ke Mode Terang'"
+                    >
+                        <div class="flex items-center gap-3">
+                            <template x-if="$store.theme.mode === 'light'">
+                                <svg class="w-5 h-5 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="5"></circle>
+                                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                                </svg>
+                            </template>
+                            <template x-if="$store.theme.mode !== 'light'">
+                                <svg class="w-5 h-5 text-ink-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                </svg>
+                            </template>
+                            <span x-text="$store.theme.mode === 'light' ? 'Mode Terang' : 'Mode Gelap'"></span>
+                        </div>
+                        <div class="w-8 h-4 rounded-full relative transition-colors border border-hairline shrink-0" :class="$store.theme.mode === 'light' ? 'bg-primary' : 'bg-surface-3'">
+                            <div class="w-3 h-3 bg-white rounded-full absolute top-0.5 transition-transform duration-200" :class="$store.theme.mode === 'light' ? 'translate-x-4' : 'translate-x-0.5'"></div>
+                        </div>
+                    </button>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="flex items-center gap-3 w-full text-left text-sm font-medium text-ink-muted hover:text-ink transition-colors min-h-[44px]">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <button type="submit" class="flex items-center gap-3 w-full text-left text-sm font-medium text-ink-muted hover:text-ink hover:bg-surface-2 rounded-md px-3 py-2.5 transition-colors min-h-[44px] cursor-pointer">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                             </svg>
                             Keluar
@@ -72,7 +141,7 @@
                         <div class="w-4 h-4 rounded-full bg-primary"></div>
                         <span class="text-sm font-semibold text-ink tracking-tight">Sumber Urip</span>
                     </div>
-                    <button type="button" class="text-ink-subtle hover:text-ink min-h-[44px] min-w-[44px] flex items-center justify-center" @click="sidebarOpen = false" aria-label="Tutup menu">
+                    <button type="button" class="text-ink-subtle hover:text-ink min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer" @click="sidebarOpen = false" aria-label="Tutup menu">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -86,11 +155,42 @@
                         </a>
                     @endforeach
                 </nav>
-                <div class="border-t border-hairline p-4">
+                <div class="border-t border-hairline p-4 space-y-1">
+                    <button
+                        type="button"
+                        @click="$store.theme.toggle()"
+                        class="flex items-center justify-between w-full text-left text-sm font-medium text-ink-muted hover:text-ink hover:bg-surface-2 rounded-md px-3 py-2.5 transition-colors min-h-[44px] cursor-pointer"
+                        :title="$store.theme.mode === 'light' ? 'Beralih ke Mode Gelap' : 'Beralih ke Mode Terang'"
+                    >
+                        <div class="flex items-center gap-3">
+                            <template x-if="$store.theme.mode === 'light'">
+                                <svg class="w-5 h-5 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="5"></circle>
+                                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                                </svg>
+                            </template>
+                            <template x-if="$store.theme.mode !== 'light'">
+                                <svg class="w-5 h-5 text-ink-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                                </svg>
+                            </template>
+                            <span x-text="$store.theme.mode === 'light' ? 'Mode Terang' : 'Mode Gelap'"></span>
+                        </div>
+                        <div class="w-8 h-4 rounded-full relative transition-colors border border-hairline shrink-0" :class="$store.theme.mode === 'light' ? 'bg-primary' : 'bg-surface-3'">
+                            <div class="w-3 h-3 bg-white rounded-full absolute top-0.5 transition-transform duration-200" :class="$store.theme.mode === 'light' ? 'translate-x-4' : 'translate-x-0.5'"></div>
+                        </div>
+                    </button>
                     <form method="POST" action="{{ route('logout') }}" class="text-left">
                         @csrf
-                        <button type="submit" class="flex items-center gap-3 w-full text-sm font-medium text-ink-muted hover:text-ink transition-colors min-h-[44px]" @click="sidebarOpen = false">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <button type="submit" class="flex items-center gap-3 w-full text-sm font-medium text-ink-muted hover:text-ink hover:bg-surface-2 rounded-md px-3 py-2.5 transition-colors min-h-[44px] cursor-pointer" @click="sidebarOpen = false">
+                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                             </svg>
                             Keluar
