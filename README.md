@@ -69,6 +69,32 @@ Open http://localhost:8000.
 - Products with `track_stock = false` (e.g. *Isi Ulang Air Galon*) never reduce stock.
 - Invoice numbers follow `INV-YYYYMMDD-0001` and reset daily.
 
+## Deploying to EthioDeploy
+
+EthioDeploy detects Laravel automatically (from `artisan` + `laravel/framework`) and runs:
+
+- Install: `composer install --no-dev --optimize-autoloader`
+- Build: `npm run build` (Vite assets)
+- Start: nginx + PHP-FPM with `config:cache`, `route:cache`, `view:cache`
+
+Repo-side config is already prepared:
+
+- `bootstrap/app.php` trusts the platform proxy (`trustProxies(at: '*')`) for HTTPS URLs.
+- `config/database.php` reads `DB_URL` and falls back to `DATABASE_URL` (injected by the MySQL addon).
+
+In the EthioDeploy project settings:
+
+1. Add a **MySQL** addon.
+2. Set environment variables (see `.env.ethiodeploy.example`):
+   - `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://<project>.ethiodeploy.app`
+   - `APP_KEY=<output of php artisan key:generate --show>`
+   - `DB_CONNECTION=mysql`
+3. Set the **Start command** so tables exist before the server boots:
+   ```bash
+   php artisan migrate --force && ethiodeploy-start
+   ```
+4. If the build fails with `vendor/autoload.php` missing, the install step did not run: clear the build cache and redeploy, and confirm **Settings → Build → Install** is `composer install --no-dev --optimize-autoloader` (the default).
+
 ## Exporting the Database (Backup)
 
 For MySQL:
