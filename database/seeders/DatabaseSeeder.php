@@ -14,53 +14,45 @@ class DatabaseSeeder extends Seeder
 
     /**
      * Seed the application's database.
+     *
+     * Uses firstOrCreate so the seeder is safe to run repeatedly: existing
+     * users and products (including stock/price changes made by the owner)
+     * are never overwritten.
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'Administrator',
-            'username' => 'admin',
-            'password' => Hash::make('password'),
-        ]);
+        User::firstOrCreate(
+            ['username' => 'admin'],
+            [
+                'name' => 'Administrator',
+                'password' => Hash::make('password'),
+            ]
+        );
 
-        Product::create([
-            'name' => 'Isi Ulang Air Galon',
-            'unit' => 'galon',
-            'price' => 6000,
-            'stock' => 0,
-            'min_stock' => 0,
-            'track_stock' => false,
-            'is_active' => true,
-        ]);
+        $this->firstOrCreateProduct('Isi Ulang Air Galon', 'galon', 6000, 0, 0, false);
+        $this->firstOrCreateProduct('Galon Kosong Baru', 'pcs', 45000, 20, 5, true);
+        $this->firstOrCreateProduct('Air Galon + Galon (Paket)', 'pcs', 65000, 10, 3, true);
+        $this->firstOrCreateProduct('Segel/Tutup Galon', 'pcs', 2000, 100, 20, true);
+    }
 
-        Product::create([
-            'name' => 'Galon Kosong Baru',
-            'unit' => 'pcs',
-            'price' => 45000,
-            'stock' => 20,
-            'min_stock' => 5,
-            'track_stock' => true,
-            'is_active' => true,
-        ]);
-
-        Product::create([
-            'name' => 'Air Galon + Galon (Paket)',
-            'unit' => 'pcs',
-            'price' => 65000,
-            'stock' => 10,
-            'min_stock' => 3,
-            'track_stock' => true,
-            'is_active' => true,
-        ]);
-
-        Product::create([
-            'name' => 'Segel/Tutup Galon',
-            'unit' => 'pcs',
-            'price' => 2000,
-            'stock' => 100,
-            'min_stock' => 20,
-            'track_stock' => true,
-            'is_active' => true,
-        ]);
+    private function firstOrCreateProduct(
+        string $name,
+        string $unit,
+        int $price,
+        int $stock,
+        int $minStock,
+        bool $trackStock
+    ): void {
+        Product::firstOrCreate(
+            ['name' => $name],
+            [
+                'unit' => $unit,
+                'price' => $price,
+                'stock' => $stock,
+                'min_stock' => $minStock,
+                'track_stock' => $trackStock,
+                'is_active' => true,
+            ]
+        );
     }
 }
