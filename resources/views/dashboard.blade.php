@@ -84,8 +84,10 @@
                 <button type="button" @click="fetchData()" class="mt-2 text-xs text-primary hover:underline font-medium">Coba lagi</button>
             </div>
 
-            <!-- ApexCharts container -->
-            <div x-ref="chartContainer" class="w-full"></div>
+            <!-- ApexCharts container (horizontal scroll on mobile) -->
+            <div class="overflow-x-auto -mx-1 px-1">
+                <div x-ref="chartContainer" :style="isMobile ? 'min-width:' + mobileChartWidth + 'px' : 'width:100%'"></div>
+            </div>
         </div>
     </div>
 
@@ -134,6 +136,8 @@
                     error: null,
                     chart: null,
                     totalRevenue: 0,
+                    isMobile: window.innerWidth < 640,
+                    mobileChartWidth: 700,
 
                     get formattedTotal() {
                         return 'Rp ' + Number(this.totalRevenue || 0).toLocaleString('id-ID');
@@ -227,12 +231,22 @@
                         const el = this.$refs.chartContainer;
                         if (!el) return;
 
+                        this.isMobile = window.innerWidth < 640;
+
+                        // On mobile, give each data point at least 40px so labels don't overlap
+                        const minWidthPerPoint = 40;
+                        const computedWidth = this.isMobile
+                            ? Math.max(700, labels.length * minWidthPerPoint)
+                            : '100%';
+                        this.mobileChartWidth = typeof computedWidth === 'number' ? computedWidth : 700;
+
                         const isLight = document.documentElement.classList.contains('light');
 
                         const options = {
                             chart: {
                                 type: 'area',
                                 height: 280,
+                                width: this.isMobile ? this.mobileChartWidth : '100%',
                                 fontFamily: 'Inter, system-ui, sans-serif',
                                 background: 'transparent',
                                 toolbar: { show: false },
@@ -345,6 +359,9 @@
 
                         if (this.chart) {
                             this.chart.updateOptions({
+                                chart: {
+                                    width: this.isMobile ? this.mobileChartWidth : '100%',
+                                },
                                 xaxis: { categories: labels },
                                 series: [{ name: 'Pendapatan', data: data }]
                             });
